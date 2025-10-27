@@ -33,17 +33,15 @@ export const sendMessagse = TryCatch(async (req, res) => {
 
         await chat.save();
 
-        return res
-            .status(200)
-            .json(
-                {
-                    message: "Chat created and message send successfully"
-                }
-            )
+        // return res
+        //     .status(200)
+        //     .json(
+        //         {
+        //             message: "Chat created and message send successfully"
+        //         }
+        //     )
 
-    };
-
-    const newMessage = new Message({
+ const newMessage = new Message({
         chatId: chat._id,
         sender: senderId,
         text: message,
@@ -66,5 +64,9 @@ export const sendMessagse = TryCatch(async (req, res) => {
                 data: newMessage,
             }
         );
+
+    };
+
+   
 
 });
