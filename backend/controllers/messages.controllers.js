@@ -42,12 +42,14 @@ export const sendMessages = TryCatch(async (req, res) => {
 
     await newMessage.save();
 
-await newMessage.populate("sender" , "name profilePic email");
+    await newMessage.populate("sender");
 
     chat.latestMessage = {
         text: message,
-        sender: senderId,   
+        sender: senderId,
     };
+
+    await chat.save();
 
     return res
         .status(201)
@@ -58,7 +60,47 @@ await newMessage.populate("sender" , "name profilePic email");
             }
         );
 
-
-
-
 });
+
+export const getAllMessages = TryCatch(async (req, res) => {
+    const { chatId } = req.params;
+    const userId = req.user._id;
+
+    const chat = await Chat.findOne(
+        {
+            users: { $all: [userId, chatId] }
+        }
+    );
+
+    if (!chat) {
+        return res
+            .status(404)
+            .json(
+                {
+                    message: "Chat not found"
+                }
+            )
+    };
+
+    const messages = await Message.find(
+        {
+            chatId: chat._id
+        }
+    );
+
+    return res
+    .status(200)
+    .json(
+        {
+            message : "Messages fetched successfully",
+            data : messages,
+        }
+    );
+});
+
+export const getChats = TryCatch(async (req , res) =>{
+    const chat = await Chat.find(req.user._id)
+    .populate("users" , "-password");
+
+    res.json(chat)
+})

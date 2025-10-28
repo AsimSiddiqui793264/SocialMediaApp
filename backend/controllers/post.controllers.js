@@ -326,9 +326,9 @@ export const editPost = TryCatch(async (req , res) =>{
         )
     };
 
-    if (file) {
+    // if (file) {
         const fileUrl = getDataUri(file);
-    };
+    // };
 
     await cloudinary.v2.uploader.destroy(post.post.id);
 

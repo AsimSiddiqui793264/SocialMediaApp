@@ -21,9 +21,6 @@ router.post("/like/:id" , isAuth , likeUnlikePost);
 router.post("/comment/:id" , isAuth , commentonPost);
 router.delete("/comment/:id" , isAuth , deleteComment);
 router.put("/editcaption/:id" , isAuth , editCaption)
-// router.put("/test", (req, res) => {
-//   res.send("PUT route works!");
-// });
 router.post("/editpost/:id" , isAuth , upload , editPost)
 
 export default router;
