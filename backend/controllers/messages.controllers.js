@@ -1,9 +1,8 @@
-import { text } from "express";
 import { Chat } from "../models/chat.models.js";
 import { Message } from "../models/message.models.js";
 import TryCatch from "../utils/trycatch.js";
 
-export const sendMessagse = TryCatch(async (req, res) => {
+export const sendMessages = TryCatch(async (req, res) => {
     const { receiverId, message } = req.body;
 
     if (!receiverId) {
@@ -33,15 +32,9 @@ export const sendMessagse = TryCatch(async (req, res) => {
 
         await chat.save();
 
-        // return res
-        //     .status(200)
-        //     .json(
-        //         {
-        //             message: "Chat created and message send successfully"
-        //         }
-        //     )
+    };
 
- const newMessage = new Message({
+    const newMessage = new Message({
         chatId: chat._id,
         sender: senderId,
         text: message,
@@ -49,12 +42,12 @@ export const sendMessagse = TryCatch(async (req, res) => {
 
     await newMessage.save();
 
-    await chat.updateOne({
-        latestMessage: {
-            text: message,
-            sender: senderId,
-        }
-    });
+await newMessage.populate("sender" , "name profilePic email");
+
+    chat.latestMessage = {
+        text: message,
+        sender: senderId,   
+    };
 
     return res
         .status(201)
@@ -65,8 +58,7 @@ export const sendMessagse = TryCatch(async (req, res) => {
             }
         );
 
-    };
 
-   
+
 
 });

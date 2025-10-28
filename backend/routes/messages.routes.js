@@ -1,9 +1,9 @@
 import express from "express";
 import { isAuth } from "../middlewares/isAuth.middleware.js";
-import { sendMessagse } from "../controllers/messages.controllers.js";
+import { sendMessages } from "../controllers/messages.controllers.js";
 
 const router = express.Router();
 
-router.post("/send" , isAuth , sendMessagse);
+router.post("/send" , isAuth , sendMessages);
 
 export default router;
