@@ -63,12 +63,12 @@ export const sendMessages = TryCatch(async (req, res) => {
 });
 
 export const getAllMessages = TryCatch(async (req, res) => {
-    const { chatId } = req.params;
+    const { id } = req.params;
     const userId = req.user._id;
 
     const chat = await Chat.findOne(
         {
-            users: { $all: [userId, chatId] }
+            users: { $all: [userId, id] }
         }
     );
 
@@ -89,18 +89,41 @@ export const getAllMessages = TryCatch(async (req, res) => {
     );
 
     return res
+        .status(200)
+        .json(
+            {
+                message: "Messages fetched successfully",
+                data: messages,
+            }
+        );
+});
+
+export const getChats = TryCatch(async (req, res) => {
+    const chats = await Chat.find({
+        users : req.user._id,
+    })
+        .populate("users", "-password");
+
+    // chat.forEach((e) => {
+    //     e.users = e.users.filter((user) => {
+    //         return user._id.toString() !== req.user._id.toString();
+    //     })
+    // });
+
+const chatData = chats.map((e) =>{
+    const chatObject = e.toObject();
+    chatObject.users = chatObject.users.filter((user) =>{
+        return user._id.toString() !== req.user._id.toString();
+    });
+    return chatObject;
+})
+
+    return res
     .status(200)
     .json(
         {
-            message : "Messages fetched successfully",
-            data : messages,
+            message : "Chats fetched successfully",
+            data : chatData,
         }
-    );
+    )
 });
-
-export const getChats = TryCatch(async (req , res) =>{
-    const chat = await Chat.find(req.user._id)
-    .populate("users" , "-password");
-
-    res.json(chat)
-})

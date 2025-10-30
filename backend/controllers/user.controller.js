@@ -122,33 +122,33 @@ export const updateProfile = TryCatch(async (req, res) => {
     const user = await User.findById(req.user._id);
 
     const { name } = req.body;
-    
-        if (!name) {
-            return res
+
+    if (!name) {
+        return res
             .status(400)
             .json(
                 {
-                    message : "name is requied"
+                    message: "name is requied"
                 }
             )
-        };
-    
-        if (name) {
-            user.name = name;
-        };
-    
+    };
+
+    if (name) {
+        user.name = name;
+    };
+
     const file = req.file;
 
 
-        if (!file) {
-            return res
+    if (!file) {
+        return res
             .status(400)
             .json(
                 {
-                    message : "file is requied"
+                    message: "file is requied"
                 }
             )
-        };
+    };
 
 
     if (file) {
@@ -215,4 +215,27 @@ export const updatePassword = TryCatch(async (req, res) => {
             }
         )
 
-})
+});
+
+export const getAllUsers = TryCatch(async (req, res) => {
+    const search = req.query.search || "";
+    const users = await User.find({
+        name: {
+            $regex: search,
+            $options: "i",
+        },
+        _id: {
+            $ne: req.user._id,
+        }
+    }).select("-password");
+
+    return res
+    .status(200)
+    .json(
+        {
+            message : "Users fetched successfully",
+            data : users,
+        }
+    )
+
+});
